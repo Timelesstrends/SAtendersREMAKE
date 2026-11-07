@@ -1,0 +1,6 @@
+{
+  "name": "SAtenderAI",
+  "description": "AI-powered bid management, compliance auditing, and tender intelligence platform for South African procurement.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
