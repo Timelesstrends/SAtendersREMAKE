@@ -27,9 +27,58 @@ export interface Employee {
   id: string;
   name: string;
   role: string;
+  email?: string;
+  accessLevel?: 'ADMIN' | 'BID_MANAGER' | 'ESTIMATOR' | 'COMPLIANCE' | 'VIEWER';
+  avatar?: string;
   qualifications: string[];
   yearsExperience: number;
   hasCV: boolean;
+}
+
+export interface PopiaConsentRecord {
+  accepted: boolean;
+  tosVersion: string;
+  acceptedAt: string;
+  acceptedByEmail: string;
+  ipNote?: string;
+}
+
+export interface EmailNotificationPreferences {
+  morningBriefingEnabled: boolean;
+  morningBriefingTimeSast: string; // default "07:30"
+  closing48hAlertEnabled: boolean;
+  recipientEmails: string[];
+  preferredProvider?: 'postmark' | 'sendgrid' | 'smtp';
+}
+
+export interface EmailLogEntry {
+  id: string;
+  companyId: string;
+  recipientEmail: string;
+  emailType: 'MORNING_BRIEFING' | 'CLOSING_48H_ALERT' | 'BID_SUBMITTED_RECEIPT';
+  provider: string;
+  status: 'DELIVERED' | 'SIMULATED_PREVIEW' | 'FAILED';
+  sentAt: string;
+  createdByUid: string;
+  subject?: string;
+}
+
+export interface UserSession {
+  user: {
+    id: string;
+    uid?: string;
+    name: string;
+    email: string;
+    role: string;
+    accessLevel: 'ADMIN' | 'BID_MANAGER' | 'ESTIMATOR' | 'COMPLIANCE' | 'VIEWER';
+    avatar?: string;
+    authMode?: 'cloud' | 'local';
+  };
+  companyId?: string;
+  inviteCode?: string;
+  popiaConsent?: PopiaConsentRecord;
+  rememberMe: boolean;
+  loginTimestamp: string;
 }
 
 export interface Asset {
@@ -59,22 +108,43 @@ export interface CompanyDocument {
   uploadedBy?: string;
 }
 
+export interface StatutoryAccreditation {
+  id: string;
+  council: string; // e.g. "CIDB", "PSIRA", "SITA", "SAHPRA", "NCCA", "DoH Reg R638 (CoA)", "RTMS", "ECSA", "SACQSP", "SAICA", "LPC"
+  councilFullName: string;
+  regNumber: string;
+  categoryOrGrading?: string; // e.g. "Grade A / Armed Response", "Level 7GB PE", "Medical Device Wholesaler", "Cert No. JH-1092"
+  expiryDate?: string;
+  verified: boolean;
+}
+
 export interface CompanyProfile {
   legalName: string;
   tradingName: string;
   registrationNumber: string;
   industry: string;
   industries?: string[]; // Multiple operating sectors in South Africa
+  logoUrl?: string; // Company custom logo
+  brandColor?: string; // Company theme accent color
+  slogan?: string;
+  companyEmail?: string;
+  companyPhone?: string;
+  physicalAddress?: string;
+  taxNumber?: string;
   services: string[];
   locations: string[];
   csdNumber: string;
   sarsTaxStatus: 'Compliant' | 'Non-Compliant' | 'Pending';
   bbeeLevel: number; // 1 to 8, or 0 for non-compliant
   cidbGrading: string; // e.g. "7GB PE", "6CE", etc.
+  statutoryAccreditations?: StatutoryAccreditation[]; // Universal for any South African SME sector
   experience: ProjectExperience[];
   employees: Employee[];
   assets: Asset[];
   documents: CompanyDocument[];
+  cloudCompanyId?: string;
+  inviteCode?: string;
+  emailNotifications?: EmailNotificationPreferences;
 }
 
 export interface RequirementItem {
@@ -184,5 +254,20 @@ export interface CommercialDocument {
     branchCode: string;
     accountType: string;
   };
+  paidDate?: string;
+  statutoryInterestRate?: number; // Prescribed Rate of Interest Act No. 55 of 1975 (e.g. 11.25% p.a.)
+  statutoryInterestClaimed?: number;
+}
+
+export interface SubcontractorPackage {
+  id: string;
+  scopeName: string;
+  subcontractorName: string;
+  csdNumber: string;
+  bbeeLevel: number;
+  designatedGroup: 'Black Women' | 'Black Youth' | 'Military Veterans' | 'People with Disabilities' | 'Local EME / QSE';
+  packageValue: number;
+  percentageOfContract: number;
+  status: 'IDENTIFIED' | 'MOU_SIGNED' | 'VERIFIED';
 }
 

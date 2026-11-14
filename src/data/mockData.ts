@@ -11,6 +11,12 @@ export const initialCompanyProfile: CompanyProfile = {
     'Security, Armed Guarding & Access Control',
     'Facilities Management & Maintenance'
   ],
+  slogan: 'Precision Bidding, Civil Construction & Infrastructure Compliance',
+  companyEmail: 'bids@satenderai.co.za',
+  companyPhone: '+27 (0)11 802 4490',
+  physicalAddress: 'Level 4, Katherine & West Building, 114 West Street, Sandton, 2196',
+  taxNumber: '9420819201',
+  brandColor: 'amber',
   services: [
     'General Building Construction',
     'Road Maintenance & Paving',
@@ -22,6 +28,80 @@ export const initialCompanyProfile: CompanyProfile = {
   sarsTaxStatus: 'Pending',
   bbeeLevel: 1,
   cidbGrading: '7GB PE / 6CE',
+  statutoryAccreditations: [
+    {
+      id: 'acc-1',
+      council: 'CIDB',
+      councilFullName: 'Construction Industry Development Board',
+      regNumber: '1019284',
+      categoryOrGrading: 'Level 7GB PE / 6CE',
+      expiryDate: '2027-04-30',
+      verified: true
+    },
+    {
+      id: 'acc-2',
+      council: 'PSIRA',
+      councilFullName: 'Private Security Industry Regulatory Authority',
+      regNumber: '2910842',
+      categoryOrGrading: 'Corporate Security Provider Grade A',
+      expiryDate: '2027-01-15',
+      verified: true
+    },
+    {
+      id: 'acc-3',
+      council: 'SITA',
+      councilFullName: 'State Information Technology Agency (GovTech)',
+      regNumber: 'SITA-ACC-2024-81',
+      categoryOrGrading: 'Transversal ICT & Software Supplier',
+      expiryDate: '2026-12-31',
+      verified: true
+    },
+    {
+      id: 'acc-4',
+      council: 'NCCA',
+      councilFullName: 'National Contract Cleaners Association',
+      regNumber: 'NCCA-GP-4819',
+      categoryOrGrading: 'Commercial & Healthcare Facility Hygiene',
+      expiryDate: '2026-11-30',
+      verified: true
+    },
+    {
+      id: 'acc-5',
+      council: 'DoH Reg R638 (CoA)',
+      councilFullName: 'Municipal Certificate of Acceptability for Food Premises',
+      regNumber: 'COA-JHB-7821',
+      categoryOrGrading: 'Bulk Commercial Catering & Food Distribution',
+      expiryDate: '2027-03-31',
+      verified: true
+    },
+    {
+      id: 'acc-6',
+      council: 'SAHPRA',
+      councilFullName: 'South African Health Products Regulatory Authority',
+      regNumber: 'MD-2023-918',
+      categoryOrGrading: 'Medical Device & PPE Establishment License',
+      expiryDate: '2027-06-30',
+      verified: true
+    },
+    {
+      id: 'acc-7',
+      council: 'RTMS',
+      councilFullName: 'Road Transport Management System',
+      regNumber: 'RTMS-ZA-3819',
+      categoryOrGrading: 'Heavy Freight Haulage & Fleet Compliance',
+      expiryDate: '2027-05-15',
+      verified: true
+    },
+    {
+      id: 'acc-8',
+      council: 'ECSA / SACQSP',
+      councilFullName: 'Engineering Council & Council for Quantity Surveyors',
+      regNumber: 'Pr.Eng 20170491 / Pr.QS 5892',
+      categoryOrGrading: 'Professional Consulting Practice',
+      expiryDate: '2027-08-31',
+      verified: true
+    }
+  ],
   experience: [
     {
       id: 'exp-1',
@@ -56,6 +136,8 @@ export const initialCompanyProfile: CompanyProfile = {
       id: 'emp-1',
       name: 'Austin Mpapane',
       role: 'Managing Director & Lead Bid Specialist',
+      email: 'austinmpapane97@gmail.com',
+      accessLevel: 'ADMIN',
       qualifications: ['B.Sc in Construction Management (Wits)', 'Project Management Professional (PMP)'],
       yearsExperience: 11,
       hasCV: true
@@ -63,7 +145,9 @@ export const initialCompanyProfile: CompanyProfile = {
     {
       id: 'emp-2',
       name: 'Lerato Dlamini',
-      role: 'Senior Civil Engineer',
+      role: 'Senior Civil Engineer & Project Manager',
+      email: 'lerato.dlamini@satenderai.co.za',
+      accessLevel: 'BID_MANAGER',
       qualifications: ['B.Eng Civil Engineering (UP)', 'Pr.Eng registered with ECSA'],
       yearsExperience: 9,
       hasCV: true
@@ -71,9 +155,21 @@ export const initialCompanyProfile: CompanyProfile = {
     {
       id: 'emp-3',
       name: 'Johannes van der Merwe',
-      role: 'SHEQ Officer',
+      role: 'SHEQ Safety & Compliance Officer',
+      email: 'johannes.vdm@satenderai.co.za',
+      accessLevel: 'COMPLIANCE',
       qualifications: ['SAMTRAC Certificate', 'NEBOSH Diploma in Occupational Health & Safety'],
       yearsExperience: 14,
+      hasCV: true
+    },
+    {
+      id: 'emp-4',
+      name: 'Sipho Khumalo',
+      role: 'Chief Quantity Surveyor & Commercial Estimator',
+      email: 'sipho.khumalo@satenderai.co.za',
+      accessLevel: 'ESTIMATOR',
+      qualifications: ['B.Sc Quantity Surveying (UCT)', 'Pr.QS registered with SACQSP'],
+      yearsExperience: 12,
       hasCV: true
     }
   ],
@@ -156,8 +252,8 @@ export const initialTenders: TenderOpportunity[] = [
     title: 'Construction of Community Hall and Recreation Centre',
     buyer: 'City of Johannesburg Local Municipality',
     sector: 'Civil Engineering / Building',
-    closingDate: '2026-08-14',
-    briefingDate: '2026-07-28',
+    closingDate: '2026-12-18',
+    briefingDate: '2026-11-28',
     siteVisit: 'Mandatory',
     value: 15500000,
     cidbLevel: '7GB',
@@ -238,8 +334,8 @@ export const initialTenders: TenderOpportunity[] = [
     buyer: 'Eskom Holdings SOC Limited',
     sector: 'Security, Armed Guarding & Access Control',
     province: 'Mpumalanga',
-    closingDate: '2026-08-28',
-    briefingDate: '2026-08-14',
+    closingDate: '2026-11-25',
+    briefingDate: '2026-11-15',
     siteVisit: 'Mandatory',
     value: 42000000,
     companyMatch: 87,
@@ -308,8 +404,8 @@ export const initialTenders: TenderOpportunity[] = [
     buyer: 'South African National Roads Agency (SANRAL)',
     sector: 'Civil Engineering & Roads',
     province: 'Gauteng',
-    closingDate: '2026-09-30',
-    briefingDate: '2026-09-04',
+    closingDate: '2026-12-23',
+    briefingDate: '2026-12-02',
     siteVisit: 'Mandatory',
     value: 46200000,
     cidbLevel: '7CE or 8CE',
@@ -365,8 +461,8 @@ export const initialTenders: TenderOpportunity[] = [
     buyer: 'State Information Technology Agency (SITA / GovTech)',
     sector: 'ICT, Software & Telecommunications',
     province: 'National / Pretoria',
-    closingDate: '2026-10-15',
-    briefingDate: '2026-09-12',
+    closingDate: '2026-11-14',
+    briefingDate: '2026-11-12',
     siteVisit: 'None',
     value: 38400000,
     cidbLevel: 'N/A',
@@ -412,6 +508,471 @@ export const initialTenders: TenderOpportunity[] = [
     sourceBroker: 'SITA GovTech Tender Bulletin (SITA-RFB-2026-319)',
     sourceUrl: 'https://www.sita.co.za/tenders/rfb-2026-319',
     submissionEmail: 'tenders@sita.co.za',
+    brokerVerified: true,
+    isLiveVerified: true
+  },
+  {
+    id: 'tender-5',
+    tenderNumber: 'DBE-NSNP-2026/04',
+    title: 'Supply and Delivery of Perishable and Non-Perishable Food Commodities for National School Nutrition Programme (NSNP)',
+    buyer: 'Department of Basic Education & Provincial Education',
+    sector: 'Agriculture, Agro-Processing & Food Supply',
+    province: 'Gauteng & Limpopo',
+    closingDate: '2026-12-11',
+    briefingDate: '2026-11-25',
+    siteVisit: 'Optional',
+    value: 28600000,
+    companyMatch: 89,
+    matchDetails: {
+      businessFit: 92,
+      experienceFit: 88,
+      complianceFit: 96,
+      geographicFit: 94,
+      financialFit: 82,
+      capacityFit: 86
+    },
+    status: 'DISCOVERED',
+    contractDurationMonths: 36,
+    complexity: 'Medium',
+    readinessScore: 84,
+    requirements: [
+      {
+        id: 'req-5-1',
+        requirement: 'Municipal Certificate of Acceptability (CoA) for Food Premises (Reg R638)',
+        isRequired: 'Mandatory',
+        status: 'Complete',
+        evidence: 'Municipal Environmental Health Inspection Certificate loaded'
+      },
+      {
+        id: 'req-5-2',
+        requirement: 'HACCP Compliant Cold-Chain & Food Hygiene Quality Control Plan',
+        isRequired: 'Mandatory',
+        status: 'Complete',
+        evidence: 'Cold-chain audit checklist & temperature log template verified'
+      },
+      {
+        id: 'req-5-3',
+        requirement: '30% Subcontracting Plan targeting Local Smallholder Farmers & Community Bakeries',
+        isRequired: 'Required',
+        status: 'Complete',
+        evidence: 'Pre-vetted local agricultural co-operatives agreements attached'
+      }
+    ],
+    riskFactors: [
+      'Perishable food items must maintain chilled temperatures (< 4°C) during transport',
+      'Daily 07:30 AM delivery deadline to recipient schools prior to breakfast serving'
+    ],
+    evaluationCriteria: {
+      ratio: '80/20',
+      pricePoints: 80,
+      preferencePoints: 20,
+      functionalityMinimum: 75
+    },
+    sourceBroker: 'National Treasury eTenders (DBE-NSNP-2026/04)',
+    sourceUrl: 'https://data.etenders.gov.za/tenders/DBE-NSNP-2026-04',
+    submissionEmail: 'nsnp.tenders@dbe.gov.za',
+    brokerVerified: true,
+    isLiveVerified: true
+  },
+  {
+    id: 'tender-6',
+    tenderNumber: 'ACSA-FAC-2026-88',
+    title: 'Provision of Comprehensive Commercial Cleaning, Deep Sanitization, Pest Control & Hygiene Services',
+    buyer: 'Airports Company South Africa (ACSA / OR Tambo)',
+    sector: 'Facilities Management & Maintenance',
+    province: 'Gauteng',
+    closingDate: '2026-11-17',
+    briefingDate: '2026-11-13',
+    siteVisit: 'Mandatory',
+    value: 19800000,
+    companyMatch: 88,
+    matchDetails: {
+      businessFit: 90,
+      experienceFit: 86,
+      complianceFit: 95,
+      geographicFit: 92,
+      financialFit: 84,
+      capacityFit: 88
+    },
+    status: 'DISCOVERED',
+    contractDurationMonths: 24,
+    complexity: 'Medium',
+    readinessScore: 82,
+    requirements: [
+      {
+        id: 'req-6-1',
+        requirement: 'National Contract Cleaners Association (NCCA) Valid Membership',
+        isRequired: 'Mandatory',
+        status: 'Complete',
+        evidence: 'NCCA Registration Certificate loaded'
+      },
+      {
+        id: 'req-6-2',
+        requirement: 'SABS 1828 Eco-friendly Chemical Compliance & Safety Data Sheets (SDS)',
+        isRequired: 'Mandatory',
+        status: 'Complete',
+        evidence: 'Chemical manufacturer safety sheets verified'
+      },
+      {
+        id: 'req-6-3',
+        requirement: 'Bioluminescence ATP Swab Testing & Hygiene Quality Plan',
+        isRequired: 'Scored',
+        status: 'Complete',
+        evidence: 'ISO 9001 Hygiene & Deep Sanitization Method Statement'
+      }
+    ],
+    riskFactors: [
+      'Strict 24/7 aviation security clearances required for all cleaning crew members',
+      'High-traffic public terminal zones require non-intrusive floor scrubbers and slip safety signage'
+    ],
+    evaluationCriteria: {
+      ratio: '80/20',
+      pricePoints: 80,
+      preferencePoints: 20,
+      functionalityMinimum: 75
+    },
+    sourceBroker: 'ACSA Procurement Portal (ACSA-FAC-2026-88)',
+    sourceUrl: 'https://www.airports.co.za/business/tenders/fac-2026-88',
+    submissionEmail: 'tenders.ortambo@airports.co.za',
+    brokerVerified: true,
+    isLiveVerified: true
+  },
+  {
+    id: 'tender-7',
+    tenderNumber: 'NHLS-RFT-2026-104',
+    title: 'Supply, Delivery and Commissioning of Medical Diagnostic Monitoring Equipment and Sterile PPE Consumables',
+    buyer: 'National Health Laboratory Service (NHLS)',
+    sector: 'Health, Medical Supplies & PPE',
+    province: 'National / Gauteng',
+    closingDate: '2027-01-15',
+    briefingDate: '2026-12-05',
+    siteVisit: 'None',
+    value: 34500000,
+    companyMatch: 86,
+    matchDetails: {
+      businessFit: 88,
+      experienceFit: 84,
+      complianceFit: 94,
+      geographicFit: 90,
+      financialFit: 85,
+      capacityFit: 82
+    },
+    status: 'DISCOVERED',
+    contractDurationMonths: 36,
+    complexity: 'High',
+    readinessScore: 80,
+    requirements: [
+      {
+        id: 'req-7-1',
+        requirement: 'SAHPRA Medical Device Establishment License (Wholesaler / Distributor)',
+        isRequired: 'Mandatory',
+        status: 'Complete',
+        evidence: 'SAHPRA Section 22C license verified on database'
+      },
+      {
+        id: 'req-7-2',
+        requirement: 'ISO 13485 Medical Devices Quality Management System certification',
+        isRequired: 'Mandatory',
+        status: 'Complete',
+        evidence: 'ISO 13485 certificate uploaded'
+      },
+      {
+        id: 'req-7-3',
+        requirement: 'Validated Cold-Chain Storage & Temperature Loggers during Transit',
+        isRequired: 'Required',
+        status: 'Complete',
+        evidence: 'Validated refrigerated transport vehicle telemetry report'
+      }
+    ],
+    riskFactors: [
+      'Diagnostic test kits require strict 2°C to 8°C temperature control with continuous digital loggers',
+      'Batch test certificates must accompany every individual delivery shipment'
+    ],
+    evaluationCriteria: {
+      ratio: '90/10',
+      pricePoints: 90,
+      preferencePoints: 10,
+      functionalityMinimum: 80
+    },
+    sourceBroker: 'National Health Laboratory Service Bulletin (NHLS-RFT-2026-104)',
+    sourceUrl: 'https://www.nhls.ac.za/tenders/rft-2026-104',
+    submissionEmail: 'tenders@nhls.ac.za',
+    brokerVerified: true,
+    isLiveVerified: true
+  },
+  {
+    id: 'tender-8',
+    tenderNumber: 'TFR-LOG-2026-512',
+    title: 'Provision of Dedicated Road Freight Transport, Long-Haul Bulk Haulage & Container Delivery Services',
+    buyer: 'Transnet Freight Rail (TFR)',
+    sector: 'Logistics, Fleet & Freight Transport',
+    province: 'KwaZulu-Natal & Gauteng',
+    closingDate: '2026-12-04',
+    briefingDate: '2026-11-20',
+    siteVisit: 'Mandatory',
+    value: 52000000,
+    companyMatch: 87,
+    matchDetails: {
+      businessFit: 90,
+      experienceFit: 86,
+      complianceFit: 95,
+      geographicFit: 92,
+      financialFit: 86,
+      capacityFit: 85
+    },
+    status: 'DISCOVERED',
+    contractDurationMonths: 36,
+    complexity: 'High',
+    readinessScore: 81,
+    requirements: [
+      {
+        id: 'req-8-1',
+        requirement: 'Road Transport Management System (RTMS) Active Certification',
+        isRequired: 'Mandatory',
+        status: 'Complete',
+        evidence: 'RTMS Annual Audit certificate attached'
+      },
+      {
+        id: 'req-8-2',
+        requirement: 'Goods In Transit (GIT) Insurance (Minimum R5,000,000 cover per payload)',
+        isRequired: 'Mandatory',
+        status: 'Complete',
+        evidence: 'Commercial insurer policy schedule verified'
+      },
+      {
+        id: 'req-8-3',
+        requirement: 'Professional Driving Permits (PrDP) and Annual Medical Fitness Certificates',
+        isRequired: 'Mandatory',
+        status: 'Complete',
+        evidence: 'Assigned driver licenses and occupational medical pins uploaded'
+      }
+    ],
+    riskFactors: [
+      'High-risk transit corridor on N3 Durban-Johannesburg requiring 24/7 satellite tracking & panic beacons',
+      'Overloading penalties strictly enforced with automated weighbridge data integration'
+    ],
+    evaluationCriteria: {
+      ratio: '90/10',
+      pricePoints: 90,
+      preferencePoints: 10,
+      functionalityMinimum: 75
+    },
+    sourceBroker: 'Transnet e-Tenders Portal (TFR-LOG-2026-512)',
+    sourceUrl: 'https://transnetetenders.azurewebsites.net/tenders/TFR-LOG-2026-512',
+    submissionEmail: 'transnet.tenders@transnet.net',
+    brokerVerified: true,
+    isLiveVerified: true
+  },
+  {
+    id: 'tender-9',
+    tenderNumber: 'DBSA-PROF-2026-17',
+    title: 'Appointment of Multi-Disciplinary Professional Advisory Panel (Quantity Surveying, Civil/Structural Engineering, Project Management)',
+    buyer: 'Development Bank of Southern Africa (DBSA)',
+    sector: 'Professional Consulting, Legal & Auditing',
+    province: 'National / SADC',
+    closingDate: '2027-01-29',
+    briefingDate: '2026-12-12',
+    siteVisit: 'None',
+    value: 26000000,
+    companyMatch: 91,
+    matchDetails: {
+      businessFit: 94,
+      experienceFit: 90,
+      complianceFit: 96,
+      geographicFit: 92,
+      financialFit: 88,
+      capacityFit: 89
+    },
+    status: 'DISCOVERED',
+    contractDurationMonths: 36,
+    complexity: 'High',
+    readinessScore: 88,
+    requirements: [
+      {
+        id: 'req-9-1',
+        requirement: 'Statutory Professional Council Registrations (ECSA Pr.Eng / SACQSP Pr.QS / SACPCMP Pr.CPM)',
+        isRequired: 'Mandatory',
+        status: 'Complete',
+        evidence: 'Key personnel professional registration certificates loaded'
+      },
+      {
+        id: 'req-9-2',
+        requirement: 'Professional Indemnity (PI) Insurance Cover (Minimum R10,000,000)',
+        isRequired: 'Mandatory',
+        status: 'Complete',
+        evidence: 'Underwriter policy letter verified'
+      },
+      {
+        id: 'req-9-3',
+        requirement: 'Comprehensive Project Methodology & ISO 9001 Consulting Quality Assurance Plan',
+        isRequired: 'Scored',
+        status: 'Complete',
+        evidence: 'Advisory framework and stakeholder management methodology drafted'
+      }
+    ],
+    riskFactors: [
+      'Multi-stakeholder infrastructure steering committees require monthly executive technical reporting',
+      'Strict milestone deliverable sign-offs linked to National Treasury FIDPM guidelines'
+    ],
+    evaluationCriteria: {
+      ratio: '80/20',
+      pricePoints: 80,
+      preferencePoints: 20,
+      functionalityMinimum: 80
+    },
+    sourceBroker: 'DBSA Procurement Portal (DBSA-PROF-2026-17)',
+    sourceUrl: 'https://www.dbsa.org/procurement/tenders/prof-2026-17',
+    submissionEmail: 'tenders@dbsa.org',
+    brokerVerified: true,
+    isLiveVerified: true
+  },
+  {
+    id: 'tender-10',
+    tenderNumber: 'RW-WTR-2026-072',
+    title: 'Turnkey Construction of 15ML Reinforced Concrete Reservoir, Bulk Water Pipeline and High-Lift Pump Station',
+    buyer: 'Rand Water SOC Limited',
+    sector: 'Water, Sanitation & Reticulation',
+    province: 'Gauteng',
+    closingDate: '2026-12-30',
+    briefingDate: '2026-12-08',
+    siteVisit: 'Mandatory',
+    value: 64000000,
+    cidbLevel: '7CE / 7ME or Higher',
+    companyMatch: 87,
+    matchDetails: {
+      businessFit: 90,
+      experienceFit: 86,
+      complianceFit: 95,
+      geographicFit: 90,
+      financialFit: 84,
+      capacityFit: 86
+    },
+    status: 'DISCOVERED',
+    contractDurationMonths: 24,
+    complexity: 'High',
+    readinessScore: 82,
+    requirements: [
+      {
+        id: 'req-10-1',
+        requirement: 'CIDB Grade 7CE or 7ME active registration on CSD',
+        isRequired: 'Mandatory',
+        status: 'Complete',
+        evidence: 'Active CIDB registration verified'
+      },
+      {
+        id: 'req-10-2',
+        requirement: 'Department of Water & Sanitation Blue Drop Water Quality Compliance Plan',
+        isRequired: 'Mandatory',
+        status: 'Complete',
+        evidence: 'Disinfection, hydrostatic testing and pipeline chlorination protocol attached'
+      },
+      {
+        id: 'req-10-3',
+        requirement: '30% Subcontracting to Local Targeted SMMEs in host municipality',
+        isRequired: 'Mandatory',
+        status: 'Complete',
+        evidence: 'Subcontractor packages allocated for pipe trenching and valve chambers'
+      }
+    ],
+    riskFactors: [
+      'Hydrostatic pressure testing required before commissioning: 1.5x working pressure with 0% allowable loss',
+      'High ground water table requires de-watering pumps during reservoir foundation construction'
+    ],
+    evaluationCriteria: {
+      ratio: '90/10',
+      pricePoints: 90,
+      preferencePoints: 10,
+      functionalityMinimum: 75
+    },
+    sourceBroker: 'Rand Water SCM Portal (RW-WTR-2026-072)',
+    sourceUrl: 'https://www.randwater.co.za/procurement/tenders/wtr-2026-072',
+    submissionEmail: 'tenders@randwater.co.za',
+    brokerVerified: true,
+    isLiveVerified: true
+  },
+  {
+    id: 'tender-exp-01',
+    tenderNumber: 'GP-DOH-2026-009',
+    title: 'Supply and Commissioning of Mobile Hospital X-Ray Screening Units',
+    buyer: 'Gauteng Department of Health',
+    sector: 'Health, Medical Supplies & PPE',
+    province: 'Gauteng',
+    closingDate: '2026-10-14',
+    briefingDate: '2026-09-20',
+    siteVisit: 'Optional',
+    value: 14200000,
+    cidbLevel: 'N/A',
+    companyMatch: 82,
+    matchDetails: {
+      businessFit: 84,
+      experienceFit: 80,
+      complianceFit: 92,
+      geographicFit: 94,
+      financialFit: 82,
+      capacityFit: 80
+    },
+    status: 'DISCOVERED',
+    contractDurationMonths: 12,
+    complexity: 'Medium',
+    readinessScore: 75,
+    requirements: [
+      { id: 'exp1-1', requirement: 'SAHPRA Radiation Control license', isRequired: 'Mandatory', status: 'Complete', evidence: 'DoH Radiation license' }
+    ],
+    riskFactors: [
+      'Submission deadline closed on 14 October 2026'
+    ],
+    evaluationCriteria: {
+      ratio: '80/20',
+      pricePoints: 80,
+      preferencePoints: 20,
+      functionalityMinimum: 70
+    },
+    sourceBroker: 'Gauteng Tender Bulletin (Notice GP-DOH-2026-009)',
+    sourceUrl: 'https://www.gauteng.gov.za/Services/Tenders',
+    submissionEmail: 'tenders.health@gauteng.gov.za',
+    brokerVerified: true,
+    isLiveVerified: true
+  },
+  {
+    id: 'tender-exp-02',
+    tenderNumber: 'PRASA-RAIL-2026-44',
+    title: 'Substation Transformer Rewinding and Overhead Traction Wire Replacement',
+    buyer: 'PRASA Rail Operations',
+    sector: 'Electrical & Energy Generation',
+    province: 'KwaZulu-Natal',
+    closingDate: '2026-10-28',
+    briefingDate: '2026-10-10',
+    siteVisit: 'Mandatory',
+    value: 21500000,
+    cidbLevel: '6EP',
+    companyMatch: 85,
+    matchDetails: {
+      businessFit: 86,
+      experienceFit: 82,
+      complianceFit: 90,
+      geographicFit: 84,
+      financialFit: 85,
+      capacityFit: 82
+    },
+    status: 'DISCOVERED',
+    contractDurationMonths: 24,
+    complexity: 'High',
+    readinessScore: 78,
+    requirements: [
+      { id: 'exp2-1', requirement: 'CIDB Grade 6EP active registration', isRequired: 'Mandatory', status: 'Complete', evidence: 'Active CIDB' }
+    ],
+    riskFactors: [
+      'Submission deadline closed on 28 October 2026'
+    ],
+    evaluationCriteria: {
+      ratio: '80/20',
+      pricePoints: 80,
+      preferencePoints: 20,
+      functionalityMinimum: 70
+    },
+    sourceBroker: 'PRASA e-Procurement Portal (Notice PRASA-RAIL-2026-44)',
+    sourceUrl: 'https://www.prasa.com/tenders',
+    submissionEmail: 'procurement@prasa.com',
     brokerVerified: true,
     isLiveVerified: true
   }

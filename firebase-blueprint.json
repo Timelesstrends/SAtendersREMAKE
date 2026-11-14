@@ -1,0 +1,310 @@
+{
+  "entities": {
+    "UserAccount": {
+      "title": "UserAccount",
+      "description": "Authenticated SaaS user account linked to a South African tendering company workspace and POPIA consent ledger.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 200
+        },
+        "displayName": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "companyId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "role": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "accessLevel": {
+          "type": "string",
+          "enum": ["ADMIN", "BID_MANAGER", "ESTIMATOR", "COMPLIANCE", "VIEWER"]
+        },
+        "popiaConsentAccepted": {
+          "type": "boolean"
+        },
+        "tosAcceptedVersion": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "tosAcceptedAt": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "updatedAt": {
+          "type": "string",
+          "maxLength": 64
+        }
+      },
+      "required": ["uid", "email", "displayName", "companyId", "accessLevel", "popiaConsentAccepted", "tosAcceptedVersion"]
+    },
+    "CompanyWorkspace": {
+      "title": "CompanyWorkspace",
+      "description": "Multi-tenant South African tendering company profile, statutory credentials, and custom branding.",
+      "type": "object",
+      "properties": {
+        "companyId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "ownerUid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "inviteCode": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "legalName": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "tradingName": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "registrationNumber": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "industry": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "csdNumber": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "bbeeLevel": {
+          "type": "number"
+        },
+        "profileJson": {
+          "type": "object"
+        },
+        "updatedAt": {
+          "type": "string",
+          "maxLength": 64
+        }
+      },
+      "required": ["companyId", "ownerUid", "legalName", "tradingName", "inviteCode"]
+    },
+    "CompanyMember": {
+      "title": "CompanyMember",
+      "description": "Employee membership and RBAC authorization within a company workspace.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "companyId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 200
+        },
+        "role": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "accessLevel": {
+          "type": "string",
+          "enum": ["ADMIN", "BID_MANAGER", "ESTIMATOR", "COMPLIANCE", "VIEWER"]
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "inviteCode": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "joinedAt": {
+          "type": "string",
+          "maxLength": 64
+        }
+      },
+      "required": ["uid", "companyId", "name", "email", "accessLevel", "active"]
+    },
+    "SharedTenderBinder": {
+      "title": "SharedTenderBinder",
+      "description": "Shared tender opportunity and bid preparation binder synchronized across all company laptops.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "companyId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "buyer": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "closingDate": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "tenderData": {
+          "type": "object"
+        },
+        "updatedByUid": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "updatedByName": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "updatedAt": {
+          "type": "string",
+          "maxLength": 64
+        }
+      },
+      "required": ["id", "companyId", "title", "buyer", "status", "closingDate", "tenderData", "updatedByUid"]
+    },
+    "SharedCommercialDoc": {
+      "title": "SharedCommercialDoc",
+      "description": "Shared VAT quotation, proforma, or tax invoice synced across company members.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "companyId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "docNumber": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "type": {
+          "type": "string",
+          "enum": ["QUOTATION", "TAX_INVOICE", "PROFORMA"]
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "docData": {
+          "type": "object"
+        },
+        "updatedByUid": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "updatedAt": {
+          "type": "string",
+          "maxLength": 64
+        }
+      },
+      "required": ["id", "companyId", "docNumber", "type", "status", "docData", "updatedByUid"]
+    },
+    "EmailNotificationLog": {
+      "title": "EmailNotificationLog",
+      "description": "Transactional email schedule and dispatch audit log for 07:30 AM Morning Briefings and 48h Tender Deadline Alerts.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "companyId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "recipientEmail": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "emailType": {
+          "type": "string",
+          "enum": ["MORNING_BRIEFING", "CLOSING_48H_ALERT", "BID_SUBMITTED_RECEIPT"]
+        },
+        "provider": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "sentAt": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "createdByUid": {
+          "type": "string",
+          "maxLength": 128
+        }
+      },
+      "required": ["id", "companyId", "recipientEmail", "emailType", "provider", "status", "sentAt", "createdByUid"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserAccount" },
+      "description": "Private user PII, active company workspace pointer, and POPIA/ToS consent record."
+    },
+    "/companies/{companyId}": {
+      "schema": { "$ref": "#/entities/CompanyWorkspace" },
+      "description": "Company workspace profile, branding, CSD, B-BBEE, statutory credentials, and shared settings."
+    },
+    "/companies/{companyId}/members/{memberUid}": {
+      "schema": { "$ref": "#/entities/CompanyMember" },
+      "description": "Authoritative RBAC membership list for a company workspace."
+    },
+    "/companies/{companyId}/tenders/{tenderId}": {
+      "schema": { "$ref": "#/entities/SharedTenderBinder" },
+      "description": "Shared company tender binder documents accessible by all active company members across devices."
+    },
+    "/companies/{companyId}/commercialDocs/{docId}": {
+      "schema": { "$ref": "#/entities/SharedCommercialDoc" },
+      "description": "Shared commercial VAT invoices and quotations for a company workspace."
+    },
+    "/companies/{companyId}/emailLogs/{logId}": {
+      "schema": { "$ref": "#/entities/EmailNotificationLog" },
+      "description": "Transactional email notification dispatch logs and schedule settings."
+    }
+  }
+}

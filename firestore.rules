@@ -1,0 +1,358 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global safety net: deny everything by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ---------------------------------------------------------
+    // Global Hardened Helper Primitives
+    // ---------------------------------------------------------
+    function isSignedIn() {
+      return request.auth != null
+        && request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string
+        && id.size() > 0
+        && id.size() <= 128
+        && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        (request.auth.token.email == 'austinmpapane97@gmail.com' && request.auth.token.email_verified == true)
+      );
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isCompanyMember(companyId) {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/companies/$(companyId)/members/$(request.auth.uid))
+        && get(/databases/$(database)/documents/companies/$(companyId)/members/$(request.auth.uid)).data.active == true;
+    }
+
+    function getMemberRole(companyId) {
+      return get(/databases/$(database)/documents/companies/$(companyId)/members/$(request.auth.uid)).data.accessLevel;
+    }
+
+    function isCompanyEditor(companyId) {
+      return isCompanyMember(companyId)
+        && getMemberRole(companyId) in ['ADMIN', 'BID_MANAGER', 'ESTIMATOR', 'COMPLIANCE'];
+    }
+
+    function isCompanyAdmin(companyId) {
+      return isCompanyMember(companyId)
+        && getMemberRole(companyId) == 'ADMIN';
+    }
+
+    // ---------------------------------------------------------
+    // Validation Blueprints (Create + Update Parity)
+    // ---------------------------------------------------------
+    function isValidUserAccount(data, userId) {
+      return data.keys().hasAll([
+          'uid', 'email', 'displayName', 'companyId', 'accessLevel',
+          'popiaConsentAccepted', 'tosAcceptedVersion'
+        ])
+        && data.keys().hasOnly([
+          'uid', 'email', 'displayName', 'companyId', 'role', 'accessLevel',
+          'popiaConsentAccepted', 'tosAcceptedVersion', 'tosAcceptedAt', 'updatedAt'
+        ])
+        && isValidId(data.uid)
+        && data.uid == userId
+        && data.email is string && data.email.size() > 3 && data.email.size() <= 200
+        && data.displayName is string && data.displayName.size() > 0 && data.displayName.size() <= 120
+        && isValidId(data.companyId)
+        && data.accessLevel in ['ADMIN', 'BID_MANAGER', 'ESTIMATOR', 'COMPLIANCE', 'VIEWER']
+        && data.popiaConsentAccepted is bool && data.popiaConsentAccepted == true
+        && data.tosAcceptedVersion is string && data.tosAcceptedVersion.size() > 0 && data.tosAcceptedVersion.size() <= 32
+        && (!('role' in data) || (data.role is string && data.role.size() <= 120))
+        && (!('tosAcceptedAt' in data) || (data.tosAcceptedAt is string && data.tosAcceptedAt.size() <= 64))
+        && (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 64));
+    }
+
+    function isValidCompanyWorkspace(data, companyId) {
+      return data.keys().hasAll([
+          'companyId', 'ownerUid', 'legalName', 'tradingName', 'inviteCode'
+        ])
+        && data.keys().hasOnly([
+          'companyId', 'ownerUid', 'inviteCode', 'legalName', 'tradingName',
+          'registrationNumber', 'industry', 'csdNumber', 'bbeeLevel',
+          'profileJson', 'updatedAt'
+        ])
+        && isValidId(data.companyId) && data.companyId == companyId
+        && isValidId(data.ownerUid)
+        && data.inviteCode is string && data.inviteCode.size() >= 4 && data.inviteCode.size() <= 32
+        && data.legalName is string && data.legalName.size() > 0 && data.legalName.size() <= 200
+        && data.tradingName is string && data.tradingName.size() > 0 && data.tradingName.size() <= 200
+        && (!('registrationNumber' in data) || (data.registrationNumber is string && data.registrationNumber.size() <= 64))
+        && (!('industry' in data) || (data.industry is string && data.industry.size() <= 120))
+        && (!('csdNumber' in data) || (data.csdNumber is string && data.csdNumber.size() <= 64))
+        && (!('bbeeLevel' in data) || (data.bbeeLevel is number && data.bbeeLevel >= 0 && data.bbeeLevel <= 8))
+        && (!('profileJson' in data) || data.profileJson is map)
+        && (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 64));
+    }
+
+    function isValidCompanyMember(data, companyId, memberUid) {
+      return data.keys().hasAll([
+          'uid', 'companyId', 'name', 'email', 'accessLevel', 'active'
+        ])
+        && data.keys().hasOnly([
+          'uid', 'companyId', 'name', 'email', 'role', 'accessLevel', 'active', 'inviteCode', 'joinedAt'
+        ])
+        && isValidId(data.uid) && data.uid == memberUid
+        && isValidId(data.companyId) && data.companyId == companyId
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 120
+        && data.email is string && data.email.size() > 3 && data.email.size() <= 200
+        && data.accessLevel in ['ADMIN', 'BID_MANAGER', 'ESTIMATOR', 'COMPLIANCE', 'VIEWER']
+        && data.active is bool
+        && (!('role' in data) || (data.role is string && data.role.size() <= 120))
+        && (!('inviteCode' in data) || (data.inviteCode is string && data.inviteCode.size() <= 32))
+        && (!('joinedAt' in data) || (data.joinedAt is string && data.joinedAt.size() <= 64));
+    }
+
+    function isValidTenderBinder(data, companyId, tenderId) {
+      return data.keys().hasAll([
+          'id', 'companyId', 'title', 'buyer', 'status', 'closingDate', 'tenderData', 'updatedByUid'
+        ])
+        && data.keys().hasOnly([
+          'id', 'companyId', 'title', 'buyer', 'status', 'closingDate',
+          'tenderData', 'updatedByUid', 'updatedByName', 'updatedAt'
+        ])
+        && isValidId(data.id) && data.id == tenderId
+        && isValidId(data.companyId) && data.companyId == companyId
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 500
+        && data.buyer is string && data.buyer.size() > 0 && data.buyer.size() <= 300
+        && data.status is string && data.status.size() > 0 && data.status.size() <= 64
+        && data.closingDate is string && data.closingDate.size() > 0 && data.closingDate.size() <= 64
+        && data.tenderData is map
+        && isValidId(data.updatedByUid) && data.updatedByUid == request.auth.uid
+        && (!('updatedByName' in data) || (data.updatedByName is string && data.updatedByName.size() <= 120))
+        && (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 64));
+    }
+
+    function isValidCommercialDoc(data, companyId, docId) {
+      return data.keys().hasAll([
+          'id', 'companyId', 'docNumber', 'type', 'status', 'docData', 'updatedByUid'
+        ])
+        && data.keys().hasOnly([
+          'id', 'companyId', 'docNumber', 'type', 'status', 'docData', 'updatedByUid', 'updatedAt'
+        ])
+        && isValidId(data.id) && data.id == docId
+        && isValidId(data.companyId) && data.companyId == companyId
+        && data.docNumber is string && data.docNumber.size() > 0 && data.docNumber.size() <= 64
+        && data.type in ['QUOTATION', 'TAX_INVOICE', 'PROFORMA']
+        && data.status is string && data.status.size() > 0 && data.status.size() <= 32
+        && data.docData is map
+        && isValidId(data.updatedByUid) && data.updatedByUid == request.auth.uid
+        && (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 64));
+    }
+
+    function isValidEmailLog(data, companyId, logId) {
+      return data.keys().hasAll([
+          'id', 'companyId', 'recipientEmail', 'emailType', 'provider', 'status', 'sentAt', 'createdByUid'
+        ])
+        && data.keys().hasOnly([
+          'id', 'companyId', 'recipientEmail', 'emailType', 'provider', 'status', 'sentAt', 'createdByUid', 'subject'
+        ])
+        && isValidId(data.id) && data.id == logId
+        && isValidId(data.companyId) && data.companyId == companyId
+        && data.recipientEmail is string && data.recipientEmail.size() > 3 && data.recipientEmail.size() <= 200
+        && data.emailType in ['MORNING_BRIEFING', 'CLOSING_48H_ALERT', 'BID_SUBMITTED_RECEIPT']
+        && data.provider is string && data.provider.size() > 0 && data.provider.size() <= 64
+        && data.status is string && data.status.size() > 0 && data.status.size() <= 32
+        && data.sentAt is string && data.sentAt.size() > 0 && data.sentAt.size() <= 64
+        && isValidId(data.createdByUid) && data.createdByUid == request.auth.uid
+        && (!('subject' in data) || (data.subject is string && data.subject.size() <= 300));
+    }
+
+    function isValidInviteEntry(data, inviteCode) {
+      return data.keys().hasAll(['inviteCode', 'companyId', 'companyName', 'ownerUid'])
+        && data.keys().hasOnly(['inviteCode', 'companyId', 'companyName', 'ownerUid', 'updatedAt'])
+        && data.inviteCode is string && data.inviteCode == inviteCode && data.inviteCode.size() >= 4 && data.inviteCode.size() <= 32
+        && isValidId(data.companyId)
+        && data.companyName is string && data.companyName.size() > 0 && data.companyName.size() <= 200
+        && isValidId(data.ownerUid) && data.ownerUid == request.auth.uid
+        && (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 64));
+    }
+
+    // ---------------------------------------------------------
+    // Collection Rules
+    // ---------------------------------------------------------
+
+    match /admins/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list, create, update, delete: if false;
+    }
+
+    // Private User Account PII & POPIA/ToS Consent Record (strict get-only for owner)
+    match /users/{userId} {
+      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
+      allow list: if false;
+      allow create: if isSignedIn()
+        && isValidId(userId)
+        && isOwner(userId)
+        && isValidUserAccount(incoming(), userId)
+        && incoming().email == request.auth.token.email;
+      allow update: if isSignedIn()
+        && isValidId(userId)
+        && (isOwner(userId) || isAdmin())
+        && isValidUserAccount(incoming(), userId)
+        && incoming().uid == existing().uid
+        && (isAdmin() || (
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'displayName', 'companyId', 'role', 'popiaConsentAccepted', 'tosAcceptedVersion', 'tosAcceptedAt', 'updatedAt'
+          ])
+          && incoming().accessLevel == existing().accessLevel
+        ));
+      allow delete: if isAdmin();
+    }
+
+    // Invite Code Lookup Directory (Strict get-only by exact invite code, zero PII, zero listing)
+    match /inviteDirectory/{inviteCode} {
+      allow get: if isSignedIn() && isValidId(inviteCode);
+      allow list: if false;
+      allow create: if isSignedIn()
+        && isValidId(inviteCode)
+        && isValidInviteEntry(incoming(), inviteCode);
+      allow update: if isSignedIn()
+        && isValidId(inviteCode)
+        && isValidInviteEntry(incoming(), inviteCode)
+        && existing().ownerUid == request.auth.uid
+        && incoming().companyId == existing().companyId
+        && incoming().diff(existing()).affectedKeys().hasOnly(['companyName', 'updatedAt']);
+      allow delete: if isSignedIn() && existing().ownerUid == request.auth.uid;
+    }
+
+    // Company Workspace Root Document
+    match /companies/{companyId} {
+      allow get: if isValidId(companyId) && (isCompanyMember(companyId) || isAdmin());
+      allow list: if false;
+      allow create: if isSignedIn()
+        && isValidId(companyId)
+        && incoming().ownerUid == request.auth.uid
+        && isValidCompanyWorkspace(incoming(), companyId);
+      allow update: if isValidId(companyId)
+        && (isCompanyEditor(companyId) || isAdmin())
+        && isValidCompanyWorkspace(incoming(), companyId)
+        && incoming().companyId == existing().companyId
+        && incoming().ownerUid == existing().ownerUid
+        && (
+          isAdmin() ||
+          (isCompanyAdmin(companyId) && incoming().diff(existing()).affectedKeys().hasOnly([
+            'legalName', 'tradingName', 'registrationNumber', 'industry',
+            'csdNumber', 'bbeeLevel', 'profileJson', 'updatedAt', 'inviteCode'
+          ])) ||
+          incoming().diff(existing()).affectedKeys().hasOnly(['profileJson', 'updatedAt'])
+        );
+      allow delete: if isAdmin();
+
+      // Team Members & RBAC Roles Subcollection
+      match /members/{memberUid} {
+        allow get: if isValidId(companyId) && isValidId(memberUid) && (isCompanyMember(companyId) || isOwner(memberUid) || isAdmin());
+        allow list: if isCompanyMember(companyId) || isAdmin();
+        allow create: if isSignedIn()
+          && isValidId(companyId)
+          && isValidId(memberUid)
+          && isValidCompanyMember(incoming(), companyId, memberUid)
+          && exists(/databases/$(database)/documents/companies/$(companyId))
+          && (
+            isAdmin() ||
+            isCompanyAdmin(companyId) ||
+            (
+              // Company creator bootstrapping their initial ADMIN membership
+              memberUid == request.auth.uid
+              && get(/databases/$(database)/documents/companies/$(companyId)).data.ownerUid == request.auth.uid
+              && incoming().accessLevel == 'ADMIN'
+            ) ||
+            (
+              // Employee joining existing workspace via valid Invite Code (cannot self-assign ADMIN)
+              memberUid == request.auth.uid
+              && ('inviteCode' in incoming())
+              && incoming().inviteCode == get(/databases/$(database)/documents/companies/$(companyId)).data.inviteCode
+              && incoming().accessLevel in ['BID_MANAGER', 'ESTIMATOR', 'COMPLIANCE', 'VIEWER']
+            )
+          );
+        allow update: if isSignedIn()
+          && isValidId(companyId)
+          && isValidId(memberUid)
+          && isValidCompanyMember(incoming(), companyId, memberUid)
+          && incoming().uid == existing().uid
+          && incoming().companyId == existing().companyId
+          && (
+            isAdmin() ||
+            (isCompanyAdmin(companyId) && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'role', 'accessLevel', 'active'])) ||
+            (isOwner(memberUid) && incoming().accessLevel == existing().accessLevel && incoming().active == existing().active && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'role']))
+          );
+        allow delete: if isCompanyAdmin(companyId) || isAdmin();
+      }
+
+      // Shared Tender Binder Subcollection (Synced across all employees' laptops)
+      match /tenders/{tenderId} {
+        allow get: if isValidId(companyId) && isValidId(tenderId) && (isCompanyMember(companyId) || isAdmin());
+        allow list: if isCompanyMember(companyId) || isAdmin();
+        allow create: if isValidId(companyId)
+          && isValidId(tenderId)
+          && (isCompanyEditor(companyId) || isAdmin())
+          && isValidTenderBinder(incoming(), companyId, tenderId);
+        allow update: if isValidId(companyId)
+          && isValidId(tenderId)
+          && (isCompanyEditor(companyId) || isAdmin())
+          && isValidTenderBinder(incoming(), companyId, tenderId)
+          && incoming().id == existing().id
+          && incoming().companyId == existing().companyId
+          && incoming().diff(existing()).affectedKeys().hasOnly([
+            'title', 'buyer', 'status', 'closingDate', 'tenderData', 'updatedByUid', 'updatedByName', 'updatedAt'
+          ]);
+        allow delete: if isCompanyAdmin(companyId) || isAdmin();
+      }
+
+      // Shared Commercial Documents (Tax Invoices, Quotes, Proformas)
+      match /commercialDocs/{docId} {
+        allow get: if isValidId(companyId) && isValidId(docId) && (isCompanyMember(companyId) || isAdmin());
+        allow list: if isCompanyMember(companyId) || isAdmin();
+        allow create: if isValidId(companyId)
+          && isValidId(docId)
+          && (isCompanyEditor(companyId) || isAdmin())
+          && isValidCommercialDoc(incoming(), companyId, docId);
+        allow update: if isValidId(companyId)
+          && isValidId(docId)
+          && (isCompanyEditor(companyId) || isAdmin())
+          && isValidCommercialDoc(incoming(), companyId, docId)
+          && incoming().id == existing().id
+          && incoming().companyId == existing().companyId
+          && incoming().diff(existing()).affectedKeys().hasOnly([
+            'docNumber', 'type', 'status', 'docData', 'updatedByUid', 'updatedAt'
+          ]);
+        allow delete: if isCompanyAdmin(companyId) || isAdmin();
+      }
+
+      // Transactional Email Dispatch Audit Logs
+      match /emailLogs/{logId} {
+        allow get: if isValidId(companyId) && isValidId(logId) && (isCompanyMember(companyId) || isAdmin());
+        allow list: if isCompanyMember(companyId) || isAdmin();
+        allow create: if isValidId(companyId)
+          && isValidId(logId)
+          && (isCompanyEditor(companyId) || isAdmin())
+          && isValidEmailLog(incoming(), companyId, logId);
+        allow update, delete: if isAdmin();
+      }
+    }
+  }
+}

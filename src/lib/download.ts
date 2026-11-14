@@ -64,9 +64,22 @@ export function triggerDocumentDownload({ name, category = 'compliance', size = 
   URL.revokeObjectURL(url);
 }
 
+function getCompanyDetails(data: any) {
+  const profile = data?.companyProfile || {};
+  const companyName = data?.companyName || profile.legalName || 'SATENDERAI SERVICES (PTY) LTD';
+  const tradingName = data?.tradingName || profile.tradingName || companyName;
+  const regNo = data?.registrationNumber || profile.registrationNumber || '2021/482931/07';
+  const csdNo = data?.csdNumber || profile.csdNumber || 'MAAA0821439';
+  const address = data?.physicalAddress || profile.physicalAddress || 'Level 4, Katherine & West Building, 114 West Street, Sandton, 2196';
+  const bbeeLevel = data?.bbeeLevel ?? profile.bbeeLevel ?? 1;
+  const taxNumber = data?.taxNumber || profile.taxNumber || '9324082144';
+  const director = data?.director || profile.employees?.[0]?.name || 'Austin Mpapane';
+  return { companyName, tradingName, regNo, csdNo, address, bbeeLevel, taxNumber, director };
+}
+
 function generateSarsPinTemplate(data: any) {
+  const comp = getCompanyDetails(data);
   const pin = data.pin || '48A9BF42C0';
-  const status = data.status || 'Compliant';
   const dateStr = new Date().toLocaleDateString('en-ZA', { year: 'numeric', month: '2-digit', day: '2-digit' });
   
   return `================================================================================
@@ -75,10 +88,10 @@ function generateSarsPinTemplate(data: any) {
 ================================================================================
 Generated Date : ${dateStr}
 Reference No   : REF-931082-ZA
-Taxpayer Name  : SATENDERAI SERVICES (PTY) LTD
-Trading Name   : SATENDERAI SERVICES
-CIPC Reg No    : 2021/482931/07
-Income Tax No  : 9324082144
+Taxpayer Name  : ${comp.companyName.toUpperCase()}
+Trading Name   : ${comp.tradingName.toUpperCase()}
+CIPC Reg No    : ${comp.regNo}
+Income Tax No  : ${comp.taxNumber}
 
 --------------------------------------------------------------------------------
 TAX COMPLIANCE STATUS DETAILS
@@ -106,7 +119,8 @@ or via the Central Supplier Database (CSD) using the TCS PIN listed above.
 }
 
 function generateCsdTemplate(data: any) {
-  const csdNum = data.csdNumber || 'MAAA0821439';
+  const comp = getCompanyDetails(data);
+  const csdNum = data.csdNumber || comp.csdNo;
   const dateStr = new Date().toLocaleDateString('en-ZA');
   
   return `================================================================================
@@ -116,26 +130,25 @@ function generateCsdTemplate(data: any) {
 Report Date    : ${dateStr}
 CSD Number     : ${csdNum}
 Registration   : COMPLETED & ACTIVE
-Supplier Name  : SATENDERAI SERVICES (PTY) LTD
-Trading Name   : SATENDERAI SERVICES
-CIPC Reg No    : 2021/482931/07
+Supplier Name  : ${comp.companyName.toUpperCase()}
+Trading Name   : ${comp.tradingName.toUpperCase()}
+CIPC Reg No    : ${comp.regNo}
 
 --------------------------------------------------------------------------------
 VERIFIED MODULE STATUS SUMMARIES
 --------------------------------------------------------------------------------
-* Industry Classification   : 8110 (Professional Services / Security & Infrastructure)
+* Industry Classification   : 8110 (Professional Services & Infrastructure)
 * Bank Account Status       : VERIFIED (Standard Bank South Africa)
 * SARS Tax Status           : COMPLIANT (PIN Status verified live)
 * CIPC Status               : IN BUSINESS / ACTIVE DIRECTORS
-* B-BBEE Status             : LEVEL 1 EME CONTRIBUTOR
-* Address Details           : VERIFIED (Gauteng Head Office)
-* Director Identities       : VERIFIED (Austin Mpapane - National ID Match)
+* B-BBEE Status             : LEVEL ${comp.bbeeLevel} CONTRIBUTOR
+* Address Details           : VERIFIED (${comp.address})
+* Director Identities       : VERIFIED (${comp.director} - National ID Match)
 
 --------------------------------------------------------------------------------
 ASSOCIATED DIRECTORS & SHAREHOLDERS
 --------------------------------------------------------------------------------
-1. Director Name            : Austin Mpapane
-   ID Number                : 970514XXXX085
+1. Director Name            : ${comp.director}
    Shareholding             : 100% Black Owned
    State Employee Status    : NO
 
@@ -145,7 +158,7 @@ ASSOCIATED DIRECTORS & SHAREHOLDERS
 }
 
 function generateBbeeAffidavitTemplate(data: any) {
-  const bbeeLevel = data.bbeeLevel || 1;
+  const comp = getCompanyDetails(data);
   const yearStr = new Date().getFullYear();
   
   return `================================================================================
@@ -154,22 +167,22 @@ function generateBbeeAffidavitTemplate(data: any) {
 ================================================================================
 
 I, the undersigned,
-Full Name & Surname : AUSTIN MPAPANE
-Identity Number     : 970514XXXX085
+Full Name & Surname : ${comp.director.toUpperCase()}
+Capacity            : Authorized Managing Director / Shareholder
 
 Hereby declare under oath as follows:
 1. The contents of this statement are to the best of my knowledge a true reflection of the facts.
 2. I am a Director / Owner of the following enterprise and am duly authorized to act on its behalf:
 
-Enterprise Name     : SATENDERAI SERVICES (PTY) LTD
-Trading Name        : SATENDERAI SERVICES
-Registration Number : 2021/482931/07
-Enterprise Physical : 44 Stanley Avenue, Milpark, Johannesburg, 2092
+Enterprise Name     : ${comp.companyName.toUpperCase()}
+Trading Name        : ${comp.tradingName.toUpperCase()}
+Registration Number : ${comp.regNo}
+Enterprise Physical : ${comp.address}
 
 3. I hereby declare under oath that the Enterprise is:
    - 100% Black Owned
    - 50% Black Woman Owned (N/A - 0%)
-   - 135% B-BBEE Procurement Recognition Level (Level 1 Contributor)
+   - 135% B-BBEE Procurement Recognition Level (Level ${comp.bbeeLevel} Contributor)
    - Exempted Micro Enterprise (Annual Turnover under R10 Million)
 
 4. Based on the Audited Financial Statements / Management Accounts and other information
@@ -189,11 +202,12 @@ Capacity            : Commissioner of Oaths / Practising Attorney RSA
 Signature Status    : CERTIFIED AND STAMPED (SANAS COMPLIANT)
 
 ================================================================================
-           SA TENDER AI COMPLIANCE PLATFORM SECURE STORAGE INTEGRITY
+           ${comp.tradingName.toUpperCase()} COMPLIANCE PLATFORM SECURE STORAGE INTEGRITY
 ================================================================================`;
 }
 
 function generateCoidaTemplate(data: any) {
+  const comp = getCompanyDetails(data);
   const dateStr = new Date().toLocaleDateString('en-ZA');
   const expDateStr = new Date(Date.now() + 270 * 24 * 60 * 60 * 1000).toLocaleDateString('en-ZA');
   
@@ -207,8 +221,8 @@ Reference No  : 990001083421
 Employer No   : 0184-293-1084
 
 Employer Details:
-SATENDERAI SERVICES (PTY) LTD
-44 Stanley Avenue, Milpark, Johannesburg, 2092
+${comp.companyName.toUpperCase()}
+${comp.address}
 
 This is to certify that the employer above-mentioned is registered under the
 Compensation for Occupational Injuries and Diseases Act, 1993 (Act No 130 of 1993)
@@ -230,7 +244,8 @@ Limitations   : None
 }
 
 function generateSbd4Template(data: any) {
-  const name = data.sigName || 'Austin Mpapane';
+  const comp = getCompanyDetails(data);
+  const name = data.sigName || comp.director;
   const title = data.sigTitle || 'Managing Director & Lead Bid Specialist';
   const dateStr = new Date().toLocaleDateString('en-ZA');
   
@@ -270,7 +285,7 @@ statements that I certify to be true and complete in every respect.
 
 Authorized Representative Name : ${name}
 Title / Capacity               : ${title}
-Company Represented            : SATENDERAI SERVICES (PTY) LTD
+Company Represented            : ${comp.companyName.toUpperCase()}
 Signed Date                    : ${dateStr}
 
 --------------------------------------------------------------------------------
@@ -284,6 +299,7 @@ Digital Key : AES-256-SHA-SECURE-${Math.random().toString(36).substring(2, 10).t
 }
 
 function generateMethodologyTemplate(data: any) {
+  const comp = getCompanyDetails(data);
   const buyer = data.buyer || 'State Procuring Entity';
   const title = data.title || 'Technical Infrastructure Project';
   const dateStr = new Date().toLocaleDateString('en-ZA');
@@ -293,13 +309,13 @@ function generateMethodologyTemplate(data: any) {
 ================================================================================
 PREPARED FOR : ${buyer}
 BID TITLE    : ${title}
-SUBMITTED BY : SATENDERAI SERVICES (PTY) LTD
+SUBMITTED BY : ${comp.companyName.toUpperCase()}
 DATE OF DRAFT: ${dateStr}
 
 --------------------------------------------------------------------------------
 1. EXECUTIVE SUMMARY & SERVICE PHILOSOPHY
 --------------------------------------------------------------------------------
-SAtenderAI Services (Pty) Ltd presents a comprehensive, risk-mitigated technical
+${comp.tradingName} presents a comprehensive, risk-mitigated technical
 methodology designed specifically to meet and exceed the operational standards 
 stipulated in the Terms of Reference. Our approach prioritizes local resource
 empowerment, SABS quality standards, and rigorous occupational health and safety.
